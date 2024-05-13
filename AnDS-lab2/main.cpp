@@ -283,5 +283,41 @@ int main() {
     // Подсчитываем количество одинаковых чисел в массиве с использованием хэш-таблицы
     countDuplicates(randomArray);
 
+    HashTable<int, std::string> intStringTable(10);
+    intStringTable.insert(1, "One");
+    intStringTable.insert(2, "Two");
+
+    // Hash table with float keys and char values
+    HashTable<float, char> floatCharTable(5);
+    floatCharTable.insert(3.14f, 'A');
+    floatCharTable.insert(2.5f, 'B');
+
+    // Hash table with string keys and int values
+    HashTable<std::string, int> stringIntTable(8);
+    stringIntTable.insert("Hello", 42);
+    stringIntTable.insert("World", 100);
+
+    HashTable<char, std::string> charStringTable(5);
+    charStringTable.insert('a', "Apple");
+    charStringTable.insert('b', "Banana");
+
+    // Print elements of the table
+    std::cout << "HashTable with char keys and string values:" << std::endl;
+    charStringTable.print();
+    std::cout << std::endl;
+
+    // Print elements of each table
+    std::cout << "HashTable with int keys and string values:" << std::endl;
+    intStringTable.print();
+    std::cout << std::endl;
+
+    std::cout << "HashTable with float keys and char values:" << std::endl;
+    floatCharTable.print();
+    std::cout << std::endl;
+
+    std::cout << "HashTable with string keys and int values:" << std::endl;
+    stringIntTable.print();
+    std::cout << std::endl;
+
     return 0;
 }
