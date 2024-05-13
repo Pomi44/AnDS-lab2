@@ -179,7 +179,34 @@ public:
         return count;
     }
 };
+void countDuplicates(const std::vector<int>& array) {
+    // Создаем хэш-таблицу для хранения чисел и их частот
+    HashTable<int, int> frequencyTable(100); // Размер таблицы выбираем произвольно, здесь 100
 
+    // Заполняем таблицу
+    for (int num : array) {
+        // Если число уже присутствует в таблице, увеличиваем его частоту на 1
+        int* frequency = frequencyTable.search(num);
+        if (frequency) {
+            (*frequency)++;
+        }
+        // Если число впервые встречается, добавляем его в таблицу со значением частоты 1
+        else {
+            frequencyTable.insert(num, 1);
+        }
+    }
+
+    // Выводим результаты
+    std::cout << "Frequencies of numbers in the array:" << std::endl;
+    for (int num : array) {
+        int* frequency = frequencyTable.search(num);
+        if (frequency) {
+            std::cout << num << ": " << *frequency << std::endl;
+            // Удаляем число из таблицы, чтобы избежать повторных выводов
+            frequencyTable.erase(num);
+        }
+    }
+}
 
 int main() {
     srand(time(nullptr)); // инициализация генератора случайных чисел
@@ -239,6 +266,22 @@ int main() {
     int keyToCount = 11;
     int count = table.count(keyToCount);
     std::cout << "Number of elements with key " << keyToCount << ": " << count << std::endl << std::endl;
+
+    // Генерируем случайный массив чисел
+    std::vector<int> randomArray;
+    for (int i = 0; i < 20; ++i) { // 20 - произвольный размер массива
+        randomArray.push_back(rand() % 10); // Генерируем числа от 0 до 9 для примера
+    }
+
+    // Выводим сгенерированный массив
+    std::cout << "The generated array:" << std::endl;
+    for (int num : randomArray) {
+        std::cout << num << " ";
+    }
+    std::cout << std::endl << std::endl;
+
+    // Подсчитываем количество одинаковых чисел в массиве с использованием хэш-таблицы
+    countDuplicates(randomArray);
 
     return 0;
 }
