@@ -179,3 +179,66 @@ public:
         return count;
     }
 };
+
+
+int main() {
+    srand(time(nullptr)); // инициализация генератора случайных чисел
+
+    // Создаем хэш-таблицу с размером 10
+    HashTable<int, int> table(10);
+
+    // Вставляем несколько элементов
+    table.insert(1, 10);
+    table.insert(2, 20);
+    table.insert(3, 30);
+    table.insert(11, 40); // будет коллизия
+
+    // Выводим содержимое таблицы
+    std::cout << "HashTable after initial inserts:" << std::endl;
+    table.print();
+    std::cout << std::endl;
+
+    // Обновляем значение элемента
+    table.insert_or_assign(2, 25);
+
+    // Выводим содержимое таблицы после обновления значения
+    std::cout << "HashTable after update:" << std::endl;
+    table.print();
+    std::cout << std::endl;
+
+    // Проверяем наличие элемента с определенным значением
+    int valueToCheck = 25;
+    if (table.contains(valueToCheck)) {
+        std::cout << "Value " << valueToCheck << " found in HashTable." << std::endl;
+    }
+    else {
+        std::cout << "Value " << valueToCheck << " not found in HashTable." << std::endl;
+    }
+    std::cout << std::endl;
+
+    // Удаляем элемент с ключом 2
+    table.erase(2);
+
+    // Выводим содержимое таблицы после удаления элемента
+    std::cout << "HashTable after erase:" << std::endl;
+    table.print();
+    std::cout << std::endl;
+
+    // Проверяем поиск элемента
+    int keyToSearch = 1;
+    int* foundValue = table.search(keyToSearch);
+    if (foundValue) {
+        std::cout << "Value for key " << keyToSearch << " found: " << *foundValue << std::endl;
+    }
+    else {
+        std::cout << "Value for key " << keyToSearch << " not found." << std::endl;
+    }
+    std::cout << std::endl;
+
+    // Проверяем подсчет количества элементов с определенным ключом
+    int keyToCount = 11;
+    int count = table.count(keyToCount);
+    std::cout << "Number of elements with key " << keyToCount << ": " << count << std::endl << std::endl;
+
+    return 0;
+}
