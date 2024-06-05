@@ -19,6 +19,7 @@ class HashTable {
     };
     std::vector<Pair*> _data;
     size_t _size;
+
     size_t hash(K key) {
         return std::hash<K>()(key) % _size;
     };
@@ -99,15 +100,6 @@ public:
         return *this;
     }
 
-
-    size_t get_size() const {
-        return _size;
-    }
-    vector<Pair*> get_data() const {
-        return _data;
-    }
-
-
     void print() {
         for (size_t i = 0; i < _size; ++i) {
             if (_data[i] && _data[i]->_occupied) {
@@ -117,9 +109,20 @@ public:
     }
     void insert(const K& key, const V& value) {
         size_t index = hash(key);
+        size_t startIndex = index;
+
+        // Проверяем, существует ли ключ
         while (_data[index] && _data[index]->_occupied) {
-            index = (index + 1) % _size; // Продвигаемся к следующему слоту
+            if (_data[index]->_key == key) {
+                throw std::runtime_error("Key already exists");
+            }
+            index = (index + 1) % _size;
+            if (index == startIndex) { // Если мы вернулись к исходному индексу, таблица полна
+                throw std::runtime_error("Hash table is full");
+            }
         }
+
+        // Вставляем новый элемент
         _data[index] = new Pair(key, value);
         _data[index]->_occupied = true;
     }
@@ -128,14 +131,12 @@ public:
         Pair* current = _data[index];
         while (current) {
             if (current->_key == key) {
-                current->_value = value; // Обновляем значение, если ключ уже существует
+                current->_value = value;
                 return;
             }
-            index = (index + 1) % _size; // Продвигаемся к следующему слоту
+            index = (index + 1) % _size;
             current = _data[index];
         }
-        // Если мы дошли сюда, значит элемент с ключом key отсутствует
-        // Вставляем новую пару ключ-значение
         insert(key, value);
     }
     bool erase(const K& key) {
@@ -181,29 +182,29 @@ public:
 };
 void countDuplicates(const std::vector<int>& array) {
     // Создаем хэш-таблицу для хранения чисел и их частот
-    HashTable<int, int> frequencyTable(100); // Размер таблицы выбираем произвольно, здесь 100
+    HashTable<int, int> frequencyTable(array.size());
 
     // Заполняем таблицу
     for (int num : array) {
-        // Если число уже присутствует в таблице, увеличиваем его частоту на 1
-        int* frequency = frequencyTable.search(num);
-        if (frequency) {
-            (*frequency)++;
+        int* currentFrequency = frequencyTable.search(num);
+        if (currentFrequency) {
+            // Увеличиваем частоту числа в таблице
+            frequencyTable.insert_or_assign(num, *currentFrequency + 1);
         }
-        // Если число впервые встречается, добавляем его в таблицу со значением частоты 1
         else {
-            frequencyTable.insert(num, 1);
+            // Добавляем число в таблицу с частотой 1
+            frequencyTable.insert_or_assign(num, 1);
         }
     }
 
     // Выводим результаты
-    std::cout << "Frequencies of numbers in the array:" << std::endl;
+    std::cout << "The frequencies of the numbers in the array:" << std::endl;
     for (int num : array) {
         int* frequency = frequencyTable.search(num);
-        if (frequency) {
-            std::cout << num << ": " << *frequency << std::endl;
-            // Удаляем число из таблицы, чтобы избежать повторных выводов
-            frequencyTable.erase(num);
+        if (frequency && *frequency > 0) {
+            std::cout << num << ": " << * frequency << std::endl;
+            // Помечаем число как уже обработанное, чтобы избежать повторной обработки
+            frequencyTable.insert_or_assign(num, 0);
         }
     }
 }
